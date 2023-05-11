@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", init, false);
-
+import uploadToDB from "/server";
 function init() {
   console.log("väntar på fil");
 }
@@ -31,6 +31,7 @@ document.getElementById("uploadButton").addEventListener("click", function () {
       data.shift();
       console.log(data);
       // Here, you can process the data as needed
+      uploadToDB(data);
     };
 
     reader.readAsText(file);
