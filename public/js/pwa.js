@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", init, false);
-import uploadToDB from "/server";
 function init() {
   console.log("väntar på fil");
 }
@@ -30,8 +29,15 @@ document.getElementById("uploadButton").addEventListener("click", function () {
       // Removes the header row
       data.shift();
       console.log(data);
+      console.log(JSON.stringify(data));
       // Here, you can process the data as needed
-      uploadToDB(data);
+      fetch("/upload", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     };
 
     reader.readAsText(file);
