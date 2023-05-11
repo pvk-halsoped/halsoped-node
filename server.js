@@ -9,15 +9,17 @@ const httpPort = 80;
 const app = express();
 
 app.use(express.static(path.join(__dirname, "public")));
-//app.use(express.json());
 
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 app.post("/upload", jsonParser, function (req, res) {
-  console.log(req.body);
+  const listOfLists = req.body;
   res.status(200).end();
+  listOfLists.forEach((element) => {
+    console.log(element);
+  });
 });
 
 app.listen(httpPort, function () {
