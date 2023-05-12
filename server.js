@@ -31,13 +31,18 @@ app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
-app.post("/upload", jsonParser, async function (req, res) {
+app.post("/upload", jsonParser, function (req, res) {
   const listOfLists = req.body;
   res.status(200).end();
+
   console.log("Trying to connect to db");
   pool.connect();
   console.log("Connected");
 
+  buildQueries(listOfLists);
+});
+
+async function buildQueries(listOfLists) {
   //Queries for inserting into the database
 
   const companyQuery = `INSERT INTO Company (companyID, name)
@@ -107,8 +112,12 @@ app.post("/upload", jsonParser, async function (req, res) {
     await sendQuery(healthScreeningQuery, insert_list, "Health Screening");
     
     let date = await formatDate(element[0]);
+    console.log("ELEMENT at index 0: " + element[0])
+
 
     insert_list = [element[0], 0, date, element[0]]; // surveyID, surveyMethod, date, screeningID
+    console.log("HEALTH SURVEY INSERT: "+ insert_list);
+
     await sendQuery(healthSurveyQuery, insert_list, "Health Survey");
 
     insert_list = [element[0], element[3], element[4]]; // surveyID, generalQ1, generalQ2
@@ -132,27 +141,31 @@ app.post("/upload", jsonParser, async function (req, res) {
     insert_list = [element[0], element[38], element[39], element[40], element[41]]; // surveyID, sleepQ1, sleepQ2, sleepQ3, sleepQ4
     sendQuery(otherQuery, insert_list, "Other");
   });
-});
+};
 
 async function sendQuery(query, insert_list, category) {
   pool.query(query, insert_list, (res, err) => {
     if (err) {
       console.error("$1\nDB result: $2\nDB error: $3", [category, res, err]);
     }
-    console.log('$1 DB insert successful', [category]);
+    console.log(category.toUpperCase() + ' DB insert successful');
   });
 };
 
 async function formatDate(raw_date){
   // date formatting for database insertion (YYYY-MM-DD)
+  console.log("RAW_DATE: " + raw_date);
+
   let split_raw_date = raw_date.split(" ");
-  let split_date = raw_date[0].split("/");
+  let split_date = split_raw_date[0].split("/");
   let day = split_date[0];
   if (split_date[0].length == 1) {
     day == "0" + split_date[0];
   } 
-  //console.log(date);
-  return split_date[2] + "-" + split_date[1] + "-" + day;
+  console.log("SPLIT DATE: " + split_date);
+  let date = split_date[2] + "-" + split_date[1] + "-" + day;
+  console.log("DATE: " + date);
+  return date
 };
 
 app.listen(httpPort, function () {
