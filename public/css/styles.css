@@ -1,0 +1,91 @@
+.center-me {
+  text-align: center;
+}
+header {
+  position: relative;
+  right: 0;
+  top: 0;
+  left: 0;
+  padding: 1rem;
+  margin: 0;
+  background-color: #efefef;
+  text-align: center;
+}
+
+footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background-color: #efefef;
+  text-align: center;
+}
+button,
+input[type="file"] {
+  background-color: #0095ff;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  box-shadow: rgba(255, 255, 255, 0.4) 0 1px 0 0 inset;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: -apple-system, system-ui, "Segoe UI", "Liberation Sans",
+    sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.15385;
+  margin: 5px;
+  outline: none;
+  padding: 8px 0.8em;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+button:hover,
+button:focus {
+  background-color: #07c;
+}
+
+button:focus {
+  box-shadow: 0 0 0 4px rgba(0, 149, 255, 0.15);
+}
+
+button:active {
+  background-color: #0064bd;
+  box-shadow: none;
+}
+
+#resultButton {
+  background-color: #9500ff;
+}
+
+#resultButton:hover,
+#resultButton:focus {
+  background-color: #70c;
+}
+
+#resultButton:active {
+  background-color: #70c;
+  box-shadow: none;
+}
+
+input[type="file"] {
+  background-color: #348a0f;
+}
+
+input[type="file"]:hover,
+input[type="file"]:focus {
+  background-color: #27680b;
+}
+input[type="file"]:active {
+  background-color: #27680b;
+  box-shadow: none;
+}

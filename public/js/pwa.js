@@ -27,11 +27,56 @@ document.getElementById("resultButton").addEventListener("click", function () {
 
       // Removes the header row
       data.shift();
-      // console.log(data);
+      console.log(data);
 
-      // make Insats list
-      let insatser = makeInsatser();
-      console.log(insatser);
+      // make list of Insats-list
+      let listOfInsatsLists = [];
+      for (var i = 0; i < data.length; i++) {
+        listOfInsatsLists.push(makeInsatser());
+      }
+      console.log(listOfInsatsLists);
+
+      // Here begins the algorithm
+      for (var i = 0; i < data.length; i++) {
+        let currentInsatsList = listOfInsatsLists[i];
+        let currentRow = data[i];
+        currentInsatsList = target1(currentInsatsList, currentRow[6]);
+        currentInsatsList = target2(
+          currentInsatsList,
+          currentRow[7],
+          currentRow[8]
+        );
+        currentInsatsList = target3(currentInsatsList, currentRow[9]);
+        currentInsatsList = target4(
+          currentInsatsList,
+          currentRow[11],
+          currentRow[12],
+          currentRow[13]
+        );
+        currentInsatsList = target5(
+          currentInsatsList,
+          currentRow[14],
+          currentRow[15],
+          currentRow[16],
+          currentRow[17]
+        );
+        currentInsatsList = target6(currentInsatsList, currentRow[18]);
+        currentInsatsList = target7(currentInsatsList);
+        currentInsatsList = target8(
+          currentInsatsList,
+          currentRow[19],
+          currentRow[20],
+          currentRow[21],
+          currentRow[22]
+        );
+        currentInsatsList = target9(currentInsatsList);
+        currentInsatsList = target10(currentInsatsList, currentRow[35]);
+        currentInsatsList = target11(currentInsatsList, currentRow[36]);
+        currentInsatsList = target12(currentInsatsList, currentRow[37]);
+        currentInsatsList = target13(currentInsatsList, currentRow[38]);
+      }
+      console.log("Algorithm done!");
+      console.log(listOfInsatsLists);
     };
 
     reader.readAsText(file);
@@ -236,7 +281,7 @@ function target11(insatser, answer33) {
       "Några gånger i månaden",
       "En gång i veckan",
       "Några gånger i veckan",
-    ].includes(answer32)
+    ].includes(answer33)
   ) {
     insatser[5].turnOn();
   }
@@ -250,7 +295,7 @@ function target12(insatser, answer34) {
       "Några gånger i månaden",
       "En gång i veckan",
       "Några gånger i veckan",
-    ].includes(answer32)
+    ].includes(answer34)
   ) {
     insatser[5].turnOn();
   }
@@ -264,7 +309,7 @@ function target13(insatser, answer35) {
       "Några gånger i månaden",
       "En gång i veckan",
       "Några gånger i veckan",
-    ].includes(answer32)
+    ].includes(answer35)
   ) {
     insatser[5].turnOn();
   }
@@ -272,11 +317,9 @@ function target13(insatser, answer35) {
 }
 
 function getNumberFromString(string) {
-  const parts = string.split(/[ |-]/);
-  for (const part of parts) {
-    if (/^\d+$/.test(part)) {
-      return parseInt(part);
-    }
+  const potNum = string.match(/\d/);
+  if (potNum) {
+    return parseInt(potNum[0]);
   }
 }
 
