@@ -2,31 +2,33 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hälsoped</title>
-    <link rel="shortcut icon" href="/public/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/public/favicon.ico" type="image/x-icon" />
 </head>
 
 <body>
     <div>
-        <div style="text-align: center;">
+        <div style="text-align: center">
             <header>
                 <h1>CSV upload</h1>
+            </header>
+            <main>
                 <p>Upload your CSV-file below</p>
                 <input type="file" id="fileInput" accept=".csv" />
-                <br>
-                <button id="uploadButton">Upload</button>
-            </header>
-
-            <main>
+                <br />
+                <button id="uploadButton">Upload to database</button>
+                <br />
+                <button id="resultButton">Get results</button>
             </main>
-            <footer>Copyright © 2023 - not for public use</footer>
+            <footer>
+                <p>Copyright © 2023 - not for public use</p>
+            </footer>
         </div>
     </div>
     <script type="module" src="/js/pwa.js"></script>
-
 </body>
 
 </html>
