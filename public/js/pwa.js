@@ -76,14 +76,29 @@ document.getElementById("resultButton").addEventListener("click", function () {
       console.log("Algorithm done!");
       console.log(listOfInsatsLists);
 
-      // Call the download function
-      fetch("/download-files", {
-        method: "POST",
-        body: JSON.stringify(listOfInsatsLists),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      let resultToHP = "";
+      for (let i = 0; i < listOfInsatsLists.length; i++) {
+        resultToHP += listOfInsatsLists[i][0].companyID + "\n";
+        for (let j = 0; j < listOfInsatsLists[i].length; j++) {
+          if (listOfInsatsLists[i][j].numberOfOns > 0) {
+            resultToHP +=
+              listOfInsatsLists[i][j].name +
+              " " +
+              listOfInsatsLists[i][j].subcategory +
+              "\n";
+          }
+        }
+        resultToHP += "\n";
+      }
+      console.log(resultToHP);
+      // Create a Blob object from the string
+      const blob = new Blob([resultToHP], { type: "text/plain" });
+
+      // Trigger the file download
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "result.txt";
+      link.click();
     };
 
     reader.readAsText(file);

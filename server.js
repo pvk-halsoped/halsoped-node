@@ -43,26 +43,6 @@ app.post("/upload", jsonParser, function (req, res) {
   buildQueries(listOfLists);
 });
 
-app.post("/download-files", jsonParser, function (req, res) {
-  const listOfInsatsLists = req.body;
-  res.status(200).end();
-  let resultToHP = "";
-  for (let i = 0; i < listOfInsatsLists.length; i++) {
-    resultToHP += listOfInsatsLists[i][0].companyID + "\n";
-    for (let j = 0; j < listOfInsatsLists[i].length; j++) {
-      if (listOfInsatsLists[i][j].numberOfOns > 0) {
-        resultToHP +=
-          listOfInsatsLists[i][j].name +
-          " " +
-          listOfInsatsLists[i][j].subcategory +
-          "\n";
-      }
-    }
-    resultToHP += "\n";
-  }
-  console.log(resultToHP);
-});
-
 async function buildQueries(listOfLists) {
   //Queries for inserting into the database
 
