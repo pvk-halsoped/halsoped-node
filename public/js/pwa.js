@@ -90,14 +90,14 @@ document.getElementById("resultButton").addEventListener("click", function () {
         }
         resultToHP += "\n";
       }
-      console.log(resultToHP);
+      // console.log(resultToHP);
       // Create a Blob object from the string
       const blob = new Blob([resultToHP], { type: "text/plain" });
 
       // Trigger the file download
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "result.txt";
+      link.download = "Färdiga insatser.txt";
       link.click();
     };
 
