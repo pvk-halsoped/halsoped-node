@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const { Pool } = require("pg");
+const fs = require("fs");
 // create application/json parser
 var jsonParser = bodyParser.json();
 
@@ -18,11 +19,11 @@ const app = express();
 }); */
 
 const pool = new Pool({
-  user: 'HPadmin',
-  host: 'localhost',
-  database: 'postgres',
-  password: 'HPpassword',
-  port: 5432
+  user: "HPadmin",
+  host: "localhost",
+  database: "postgres",
+  password: "HPpassword",
+  port: 5432,
 });
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -42,15 +43,35 @@ app.post("/upload", jsonParser, function (req, res) {
   buildQueries(listOfLists);
 });
 
+app.post("/download-files", jsonParser, function (req, res) {
+  const listOfInsatsLists = req.body;
+  res.status(200).end();
+  let resultToHP = "";
+  for (let i = 0; i < listOfInsatsLists.length; i++) {
+    resultToHP += listOfInsatsLists[i][0].companyID + "\n";
+    for (let j = 0; j < listOfInsatsLists[i].length; j++) {
+      if (listOfInsatsLists[i][j].numberOfOns > 0) {
+        resultToHP +=
+          listOfInsatsLists[i][j].name +
+          " " +
+          listOfInsatsLists[i][j].subcategory +
+          "\n";
+      }
+    }
+    resultToHP += "\n";
+  }
+  console.log(resultToHP);
+});
+
 async function buildQueries(listOfLists) {
   //Queries for inserting into the database
 
   const companyQuery = `INSERT INTO Company (companyID, name)
                         VALUES ($1,$2);`;
-  
+
   const departmentQuery = `INSERT INTO Department (departmentID, companyID, name)
                            VALUES ($1,$2,$3);`;
-  
+
   const usersQuery = `INSERT INTO Users (userID, email, password) 
                       VALUES ($1, $1, $2);`;
 
@@ -58,7 +79,7 @@ async function buildQueries(listOfLists) {
                          VALUES ($1, $2);`;
 
   const healthScreeningQuery = `INSERT INTO HealthScreening (screeningID, userID, companyID) 
-                                VALUES ($1, $2, $3);`;                 
+                                VALUES ($1, $2, $3);`;
 
   const healthSurveyQuery = `INSERT INTO HealthSurvey (surveyID, surveyMethod, date, screeningID)
                         VALUES ($1, $2, $3, $4);`;
@@ -83,7 +104,7 @@ async function buildQueries(listOfLists) {
 
   const otherQuery = `INSERT INTO Other (surveyID, otherQ1, otherQ2, otherQ3, otherQ4) 
                       VALUES ($1, $2, $3, $4, $5);`;
-    
+
   // following two queries are run once per survey
 
   //TODO: Change companyID and name to be dynamic or manually change it here for each survey
@@ -91,12 +112,10 @@ async function buildQueries(listOfLists) {
   await sendQuery(companyQuery, insert_list, "Company");
 
   //TODO: As above for departmentID, companyID and name (IMPORTANT: companyID must match the one above)
-  insert_list = [1,1,"departmentName"]; // departmentID, companyID, name
+  insert_list = [1, 1, "departmentName"]; // departmentID, companyID, name
   await sendQuery(departmentQuery, insert_list, "Department");
 
-
   listOfLists.forEach(async (element) => {
-
     // following queries are run for all responses in the survey
 
     //TODO: users should have passwords, but is not implemented yet
@@ -106,17 +125,16 @@ async function buildQueries(listOfLists) {
     //TODO: departmentID should match the departmentID above
     insert_list = [element[2], 1]; // userID, departmentID
     await sendQuery(employeeQuery, insert_list, "Employees");
-    
+
     //TODO: companyID should match the companyID above
     insert_list = [element[0], element[2], 1]; // screeningID, userID, companyID
     await sendQuery(healthScreeningQuery, insert_list, "Health Screening");
-    
-    let date = await formatDate(element[0]);
-    console.log("ELEMENT at index 0: " + element[0])
 
+    let date = await formatDate(element[0]);
+    console.log("ELEMENT at index 0: " + element[0]);
 
     insert_list = [element[0], 0, date, element[0]]; // surveyID, surveyMethod, date, screeningID
-    console.log("HEALTH SURVEY INSERT: "+ insert_list);
+    console.log("HEALTH SURVEY INSERT: " + insert_list);
 
     await sendQuery(healthSurveyQuery, insert_list, "Health Survey");
 
@@ -126,33 +144,76 @@ async function buildQueries(listOfLists) {
     insert_list = [element[0], element[5], element[6], element[7], element[8]]; // surveyID, fitnessQ1, fitnessQ2, fitnessQ3, fitnessQ4
     sendQuery(fitnessQuery, insert_list, "Fitness");
 
-    insert_list = [element[0], element[9], element[10], element[11], element[12], element[13], element[14], element[15], element[16], element[17]]; // surveyID, workEnvironmentQ1, workEnvironmentQ2, workEnvironmentQ3, workEnvironmentQ4, workEnvironmentQ5, workEnvironmentQ6, workEnvironmentQ7, workEnvironmentQ8, workEnvironmentQ9
+    insert_list = [
+      element[0],
+      element[9],
+      element[10],
+      element[11],
+      element[12],
+      element[13],
+      element[14],
+      element[15],
+      element[16],
+      element[17],
+    ]; // surveyID, workEnvironmentQ1, workEnvironmentQ2, workEnvironmentQ3, workEnvironmentQ4, workEnvironmentQ5, workEnvironmentQ6, workEnvironmentQ7, workEnvironmentQ8, workEnvironmentQ9
     sendQuery(workEnvironmentQuery, insert_list, "Work Environment");
 
-    insert_list = [element[0], element[18], element[19], element[20], element[21], element[22], element[23], element[24]]; // surveyID, workEnvironmentQ1, workEnvironmentQ2, workEnvironmentQ3, workEnvironmentQ4, workEnvironmentQ5, workEnvironmentQ6, workEnvironmentQ7, workEnvironmentQ8, workEnvironmentQ9
+    insert_list = [
+      element[0],
+      element[18],
+      element[19],
+      element[20],
+      element[21],
+      element[22],
+      element[23],
+      element[24],
+    ]; // surveyID, workEnvironmentQ1, workEnvironmentQ2, workEnvironmentQ3, workEnvironmentQ4, workEnvironmentQ5, workEnvironmentQ6, workEnvironmentQ7, workEnvironmentQ8, workEnvironmentQ9
     sendQuery(psychologicalHealthQuery, insert_list, "Psychological Health");
 
-    insert_list = [element[0], element[25], element[26], element[27], element[28], element[29], element[30], element[31], element[32]]; // surveyID, motivationQ1, motivationQ2, motivationQ3, motivationQ4, motivationQ5, motivationQ6, motivationQ7, motivationQ8, motivationQ9
+    insert_list = [
+      element[0],
+      element[25],
+      element[26],
+      element[27],
+      element[28],
+      element[29],
+      element[30],
+      element[31],
+      element[32],
+    ]; // surveyID, motivationQ1, motivationQ2, motivationQ3, motivationQ4, motivationQ5, motivationQ6, motivationQ7, motivationQ8, motivationQ9
     sendQuery(motivationQuery, insert_list, "Motivation");
 
-    insert_list = [element[0], element[33], element[34], element[35], element[36], element[37]]; // surveyID, eatingHabitsQ1, eatingHabitsQ2, eatingHabitsQ3, eatingHabitsQ4, eatingHabitsQ5
+    insert_list = [
+      element[0],
+      element[33],
+      element[34],
+      element[35],
+      element[36],
+      element[37],
+    ]; // surveyID, eatingHabitsQ1, eatingHabitsQ2, eatingHabitsQ3, eatingHabitsQ4, eatingHabitsQ5
     sendQuery(eatingHabitsQuery, insert_list, "Eating Habits");
 
-    insert_list = [element[0], element[38], element[39], element[40], element[41]]; // surveyID, sleepQ1, sleepQ2, sleepQ3, sleepQ4
+    insert_list = [
+      element[0],
+      element[38],
+      element[39],
+      element[40],
+      element[41],
+    ]; // surveyID, sleepQ1, sleepQ2, sleepQ3, sleepQ4
     sendQuery(otherQuery, insert_list, "Other");
   });
-};
+}
 
 async function sendQuery(query, insert_list, category) {
   pool.query(query, insert_list, (res, err) => {
     if (err) {
       console.error("$1\nDB result: $2\nDB error: $3", [category, res, err]);
     }
-    console.log(category.toUpperCase() + ' DB insert successful');
+    console.log(category.toUpperCase() + " DB insert successful");
   });
-};
+}
 
-async function formatDate(raw_date){
+async function formatDate(raw_date) {
   // date formatting for database insertion (YYYY-MM-DD)
   console.log("RAW_DATE: " + raw_date);
 
@@ -161,12 +222,12 @@ async function formatDate(raw_date){
   let day = split_date[0];
   if (split_date[0].length == 1) {
     day == "0" + split_date[0];
-  } 
+  }
   console.log("SPLIT DATE: " + split_date);
   let date = split_date[2] + "-" + split_date[1] + "-" + day;
   console.log("DATE: " + date);
-  return date
-};
+  return date;
+}
 
 app.listen(httpPort, function () {
   console.log(`Listening on port ${httpPort}!`);

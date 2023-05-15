@@ -27,19 +27,17 @@ document.getElementById("resultButton").addEventListener("click", function () {
 
       // Removes the header row
       data.shift();
-      console.log(data);
 
       // make list of Insats-list
       let listOfInsatsLists = [];
       for (var i = 0; i < data.length; i++) {
-        listOfInsatsLists.push(makeInsatser());
+        listOfInsatsLists.push(makeInsatser(data[i][2]));
       }
-      console.log(listOfInsatsLists);
 
       // Here begins the algorithm
       for (var i = 0; i < data.length; i++) {
-        let currentInsatsList = listOfInsatsLists[i];
-        let currentRow = data[i];
+        var currentInsatsList = listOfInsatsLists[i];
+        var currentRow = data[i];
         currentInsatsList = target1(currentInsatsList, currentRow[6]);
         currentInsatsList = target2(
           currentInsatsList,
@@ -77,6 +75,15 @@ document.getElementById("resultButton").addEventListener("click", function () {
       }
       console.log("Algorithm done!");
       console.log(listOfInsatsLists);
+
+      // Call the download function
+      fetch("/download-files", {
+        method: "POST",
+        body: JSON.stringify(listOfInsatsLists),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     };
 
     reader.readAsText(file);
@@ -128,16 +135,18 @@ document.getElementById("uploadButton").addEventListener("click", function () {
   }
 });
 
-function makeInsatser() {
-  const insats0 = new Insats("Träningsprogram", "Styrka");
-  const insats1 = new Insats("Träningsprogram", "Kondition");
-  const insats2 = new Insats("Träningsprogram", "Vardsgsmotion");
-  const insats3 = new Insats("Rörelsepauser");
+function makeInsatser(companyID = "") {
+  const insats0 = new Insats("Träningsprogram", "Styrka", companyID);
+  const insats1 = new Insats("Träningsprogram", "Kondition", companyID);
+  const insats2 = new Insats("Träningsprogram", "Vardsgsmotion", companyID);
+  const insats3 = new Insats("Rörelsepauser", "", companyID);
   const insats4 = new Insats(
-    "Föreläsning inom stresshantering, återhämtning och sömn"
+    "Föreläsning inom stresshantering, återhämtning och sömn",
+    "",
+    companyID
   );
-  const insats5 = new Insats("Individuell kostplan");
-  const insats6 = new Insats("Meditation/andning");
+  const insats5 = new Insats("Individuell kostplan", "", companyID);
+  const insats6 = new Insats("Meditation/andning", "", companyID);
   const insatser = [
     insats0,
     insats1,
@@ -182,7 +191,7 @@ function target3(insatser, answer6) {
 }
 
 function target4(insatser, answer8, answer9, answer10) {
-  answerList = [answer8, answer9, answer10];
+  const answerList = [answer8, answer9, answer10];
   answerList.forEach((answer) => {
     if (["Ofta", "Mycket ofta"].includes(answer)) {
       insatser[4].turnOn();
@@ -211,8 +220,8 @@ function target5(insatser, answer11, answer12, answer13, answer14) {
       insatser[4].turnOn();
       insatser[6].turnOn();
     }
-    return insatser;
   });
+  return insatser;
 }
 
 function target6(insatser, answer15) {
@@ -324,9 +333,10 @@ function getNumberFromString(string) {
 }
 
 class Insats {
-  constructor(name, subcategory = "") {
+  constructor(name, subcategory = "", companyID = "") {
     this.name = name;
     this.subcategory = subcategory;
+    this.companyID = companyID;
     this.rank = 0;
     this.numberOfOns = 0;
     this.hasFlag = false;
