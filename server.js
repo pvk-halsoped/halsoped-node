@@ -131,10 +131,11 @@ async function buildQueries(listOfLists) {
     await sendQuery(healthScreeningQuery, insert_list, "Health Screening");
 
     let date = await formatDate(element[0]);
-    console.log("ELEMENT at index 0: " + element[0]);
+    //console.log("ELEMENT at index 0: " + element[0])
 
     insert_list = [element[0], 0, date, element[0]]; // surveyID, surveyMethod, date, screeningID
     console.log("HEALTH SURVEY INSERT: " + insert_list);
+    //console.log("HEALTH SURVEY INSERT: "+ insert_list);
 
     await sendQuery(healthSurveyQuery, insert_list, "Health Survey");
 
@@ -207,7 +208,7 @@ async function buildQueries(listOfLists) {
 async function sendQuery(query, insert_list, category) {
   pool.query(query, insert_list, (res, err) => {
     if (err) {
-      console.error("$1\nDB result: $2\nDB error: $3", [category, res, err]);
+      console.error("${category}\nDB result: ${res}\nDB error: ${err}");
     }
     console.log(category.toUpperCase() + " DB insert successful");
   });
@@ -215,7 +216,7 @@ async function sendQuery(query, insert_list, category) {
 
 async function formatDate(raw_date) {
   // date formatting for database insertion (YYYY-MM-DD)
-  console.log("RAW_DATE: " + raw_date);
+  //console.log("RAW_DATE: " + raw_date);
 
   let split_raw_date = raw_date.split(" ");
   let split_date = split_raw_date[0].split("/");
