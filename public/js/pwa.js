@@ -341,7 +341,7 @@ function target13(insatser, answer35) {
 }
 
 function getNumberFromString(string) {
-  const potNum = string.match(/\d/);
+  const potNum = string.match(/\d+/);
   if (potNum) {
     return parseInt(potNum[0]);
   }
